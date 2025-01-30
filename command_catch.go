@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var caughtPokemons = make(map[string]Pokemon)
+
 type Pokemon struct {
 	Name string `json:"name"`
 }
@@ -40,6 +42,7 @@ func checkPokemonExists(pokemonName string) (bool, error) {
 func commandCatch(cfg *config, args []string, secondArg interface{}) error {
 	if len(args) == 0 {
 		return fmt.Errorf("no Pokémon specified")
+		
 	}
 
 	pokemon := args[0]
@@ -55,9 +58,11 @@ func commandCatch(cfg *config, args []string, secondArg interface{}) error {
 
 	// Pokémon exists, attempt to catch
 	if catchFunction(pokemon) {
-		fmt.Printf("%s was caught!", pokemon)
+		fmt.Printf("%s was caught!\n", pokemon)
+		// Add caught Pokémon to the map
+		caughtPokemons[pokemon] = Pokemon{Name: pokemon}
 	} else {
-		fmt.Printf("%s escaped!", pokemon)
+		fmt.Printf("%s escaped!\n", pokemon)
 	}
 	
 	return nil
@@ -71,7 +76,7 @@ func chance() int {
 
 func catchFunction(pokemon string) bool {
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon)
-	time.Sleep(5 * time.Second)
+	time.Sleep(3 * time.Second)
 	if chance() > 50 {
 		return true // Pokémon caught
 	} else {
